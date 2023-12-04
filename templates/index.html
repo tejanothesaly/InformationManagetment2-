@@ -21,7 +21,7 @@
                 <label for="email">Email:</label>
                 <input type="email" class="form-control" id="email" name="email">
             </div>
-            <button type="submit" class="btn btn-primary">Add Student</button>
+            <button type="submit" class="btn btn-primary" id="addStudentBtn">Add Student</button>
         </form>
         <hr>
         <h2>Students</h2>
@@ -65,10 +65,18 @@
                     }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
-                    success: function () {
-                        loadStudents();
-                        $('#name').val('');
-                        $('#email').val('');
+                    success: function (response) {
+                        if (response.message === "Student added successfully") {
+                            alert("Student added successfully!");
+                            loadStudents();
+                            $('#name').val('');
+                            $('#email').val('');
+                        } else {
+                            alert("Failed to add student: " + response.message);
+                        }
+                    },
+                    error: function () {
+                        alert("Failed to add student. Please try again later.");
                     }
                 });
             });
