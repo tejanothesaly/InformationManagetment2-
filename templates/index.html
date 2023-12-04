@@ -1,0 +1,78 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Management System</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Student Management System</h1>
+        <hr>
+        <h2>Add Student</h2>
+        <form id="addStudentForm">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" id="name" name="name">
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="email" name="email">
+            </div>
+            <button type="submit" class="btn btn-primary">Add Student</button>
+        </form>
+        <hr>
+        <h2>Students</h2>
+        <ul id="studentList" class="list-group">
+            <!-- Student list will be populated here -->
+        </ul>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // JavaScript to interact with Flask backend using AJAX
+        $(document).ready(function () {
+            // Function to load students
+            function loadStudents() {
+                $.ajax({
+                    type: "GET",
+                    url: "/students",
+                    success: function (data) {
+                        $('#studentList').empty();
+                        $.each(data, function (index, student) {
+                            $('#studentList').append('<li class="list-group-item">' + student.name + ' - ' + student.email + '</li>');
+                        });
+                    }
+                });
+            }
+
+            // Load students on page load
+            loadStudents();
+
+            // Function to add a student
+            $('#addStudentForm').submit(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: "/students",
+                    data: JSON.stringify({
+                        name: $('#name').val(),
+                        email: $('#email').val()
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function () {
+                        loadStudents();
+                        $('#name').val('');
+                        $('#email').val('');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
