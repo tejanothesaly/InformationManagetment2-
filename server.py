@@ -52,15 +52,18 @@ def get_student(student_id):
 @app.route('/students', methods=['POST'])
 def add_student():
     data = request.get_json()
-    name = data['name']
-    email = data['email']
+    name = data.get('name')
+    email = data.get('email')
 
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO students (name, email) VALUES (?, ?)", (name, email))
-    conn.commit()
-    conn.close()
-    return jsonify({"message": "Student added successfully"})
+    if name and email:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO students (name, email) VALUES (?, ?)", (name, email))
+        conn.commit()
+        conn.close()
+        return jsonify({"message": "Student added successfully"})
+    else:
+        return jsonify({"message": "Invalid data provided"}), 400  # Bad Request status
 
 
 @app.route('/students/<int:student_id>', methods=['PUT'])
@@ -91,4 +94,5 @@ def index():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    app.run(port=5001)
+
